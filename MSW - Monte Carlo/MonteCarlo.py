@@ -13,7 +13,7 @@ class Hrac:
         self.vitezstvi = []
 
     def __repr__(self):
-        return f"Jsem tu abych pomohl se snazší implementací vyhodnocení oproti původní verzi MC"
+        return f"Jsem tu, abych pomohl se snazší implementací vyhodnocení oproti původní verzi MC"
 
 
 # Hody kostek
@@ -47,16 +47,38 @@ def najdi_stejne(kostka):
         else:
             i += 1
 
+    # print(stejne_hodnoty)
     for value in set(stejne_hodnoty):
         count = stejne_hodnoty.count(value)
         tuple_k_bodovani.append((value, count))
 
-#    print(tuple_k_bodovani)
+    # print(type(tuple_k_bodovani))
     return bodovani(tuple_k_bodovani, seznam_hodnot)
 
 
 # Funkce pro bodování jednotlivých hodů
 def bodovani(stejna_cisla, hodnoty_hodu):
+    """
+    :param stejna_cisla: výstup funkce najdi_stejne()
+    :param hodnoty_hodu: výstup hodu kostek
+    :return: vrací zpět počet bodů, které hráč za kolo obdržel
+
+    Bodování:
+    Hodnota                               Body
+    1                                     100
+    5                                     50
+    3x stejné (kromě jedniček)            číslo x 100
+    4x stejné (kromě jedniček)            číslo x 200
+    5x stejné (kromě jedniček)            číslo x 400
+    6x stejné (kromě jedniček)            číslo x 800
+    3x jednička                           1000
+    4x jednička                           2000
+    5x jednička                           4000
+    6x jednička                           8000
+    3x dvojice                            1000
+    postupka (123456)                     1500
+    """
+
     body = 0
     global postupka
     global trojice
@@ -116,12 +138,13 @@ def bodovani(stejna_cisla, hodnoty_hodu):
 
 # Spuštění hry
 def hra(soutezici, n_her):
-#    print(f"Je na tahu hráč {soutezici.jmeno}")
+    # print(f"Je na tahu hráč {soutezici.jmeno}")
     for i in range(n_her):
-        herni_kolo = najdi_stejne(hod_kostky(pocet_kostek))
-        soutezici.body += herni_kolo
-        soutezici.kolo_body.append(herni_kolo)
-    pass
+        for hrac in soutezici:
+            herni_kolo = najdi_stejne(hod_kostky(pocet_kostek))
+            hrac.body += herni_kolo
+            hrac.kolo_body.append(herni_kolo)
+    return
 
 
 # Vyhodnocení pro grafy
@@ -143,6 +166,7 @@ def vyhodnoceni(n_remiz):
             hrac2.vitezstvi.append(1)
             n_remiz.append(0)
             i += 1
+    return
 #    print(f"{hrac1.jmeno} vyhrál {hrac1.vitezstvi} kol, {hrac2.jmeno} vyhrál {hrac2.vitezstvi} kol,"
 #          f" remizovalo se {n_remiz} kol.")
 
@@ -150,7 +174,7 @@ def vyhodnoceni(n_remiz):
 ###################### NASTAVENÍ #######################
 
 pocet_kostek = 6
-pocet_her = 1500
+pocet_her = 500
 hozena_cisla = []
 bodovani_list = []
 list_remiz = []
@@ -162,32 +186,29 @@ sestice = 0
 tri_pary = 0
 hrac1 = Hrac("Hráč 1")
 hrac2 = Hrac("Hráč 2")
-
 seznam_hracu = [hrac1, hrac2]
 
-
-for hrac in seznam_hracu:
-    hra(hrac, pocet_her)
-
+hra(seznam_hracu, pocet_her)
 vyhodnoceni(list_remiz)
 
-#print(bodovani_list)
-#print(f"Odehráno {pocet_her} kol.")
-#print(f"{hrac1.jmeno}: {hrac1.body}, {hrac2.jmeno}: {hrac2.body}")
-#print(f"{hrac1.jmeno} body po kolech: {hrac1.kolo_body}\n{hrac2.jmeno} body po kolech: {hrac2.kolo_body}")
+# print(bodovani_list)
+# print(f"Odehráno {pocet_her} kol.")
+# print(f"{hrac1.jmeno}: {hrac1.body}, {hrac2.jmeno}: {hrac2.body}")
+# print(f"{hrac1.jmeno} body po kolech: {hrac1.kolo_body}\n{hrac2.jmeno} body po kolech: {hrac2.kolo_body}")
 print(f"***** Počet hodů kostkami: {pocet_her*2} *****")
-print(f"% šance na hození postupky bylo {(postupka/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození postupky bylo {(postupka/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {postupka}krát.")
-print(f"% šance na hození tří párů bylo {(tri_pary/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození tří párů bylo {(tri_pary/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {tri_pary}krát.")
-print(f"% šance na hození trojice bylo {(trojice/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození trojice bylo {(trojice/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {trojice}krát.")
-print(f"% šance na hození čtveřice bylo {(ctverice/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození čtveřice bylo {(ctverice/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {ctverice}krát.")
-print(f"% šance na hození pětice bylo {(petice/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození pětice bylo {(petice/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {petice}krát.")
-print(f"% šance na hození šestice bylo {(sestice/pocet_her)*100}%, celkově "
+print(f"% pravděpodobnost hození šestice bylo {(sestice/(pocet_her*2))*100}%, celkově "
       f"padla na kostkách {sestice}krát")
+
 
 ####################### GRAFY #######################
 
@@ -230,6 +251,8 @@ plot.show()
 plot.figure(figsize=(12, 6))
 plot.plot(osa_x, prumer_bodu_hrac1, label="Průměr bodů hráč 1", alpha=0.7)
 plot.plot(osa_x, prumer_bodu_hrac2, label="Průměr bodů hráč 2", alpha=0.7)
+plot.axhline(y=(sum(prumer_bodu_hrac1) + sum(prumer_bodu_hrac2))/(pocet_her*2), color="k",
+             label="Průměrná hodnota bodů celkem")
 plot.xlabel("Počet her (n)")
 plot.ylabel("Průměrný počet bodů")
 plot.title("Průměrný počet bodů hráčů v průběhu her")
